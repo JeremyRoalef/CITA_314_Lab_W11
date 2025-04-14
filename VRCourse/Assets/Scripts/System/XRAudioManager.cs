@@ -7,6 +7,20 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class XRAudioManager : MonoBehaviour
 {
+    [Header("Progress Control")]
+
+    [SerializeField]
+    ProgressControl progressControl;
+
+    [SerializeField]
+    AudioSource progressSound;
+
+    [SerializeField]
+    AudioClip startGameClip;
+
+    [SerializeField]
+    AudioClip challengeCompleteClip;
+
     [Header("Grab Interactables")]
 
     [SerializeField]
@@ -80,9 +94,13 @@ public class XRAudioManager : MonoBehaviour
     [Header("Local Audio Settings")]
 
     [SerializeField]
+    AudioSource backgroundMusic;
+    [SerializeField]
+    AudioClip backgroundMusicClip;
+    [SerializeField]
     AudioClip fallBackClip;
     const string FALL_BACK_CLIP = "fallBackClip";
-
+    bool startAudio;
 
     private void OnEnable()
     {
@@ -90,6 +108,13 @@ public class XRAudioManager : MonoBehaviour
         if (fallBackClip == null)
         {
             fallBackClip = AudioClip.Create(FALL_BACK_CLIP, 1, 1, 1000, true);
+        }
+
+        //Progress Control
+        if (progressControl != null)
+        {
+            progressControl.OnStartGame.AddListener(StartGame);
+            progressControl.OnChallengeComplete.AddListener(ChallengeComplete);
         }
 
         //Grabbable Objects
@@ -123,6 +148,36 @@ public class XRAudioManager : MonoBehaviour
             SetComboLock();
         }
 
+    }
+
+    private void ChallengeComplete(string arg0)
+    {
+        if (progressSound != null && challengeCompleteClip != null)
+        {
+            progressSound.clip = challengeCompleteClip;
+            progressSound.Play();
+        }
+    }
+
+    private void StartGame(string arg0)
+    {
+        if (!startAudio)
+        {
+            startAudio = true;
+            if (backgroundMusic != null && backgroundMusicClip != null)
+            {
+                backgroundMusic.clip = backgroundMusicClip;
+                backgroundMusic.Play();
+            }
+        }
+        else
+        {
+            if (progressSound != null && startGameClip != null)
+            {
+                progressSound.clip = startGameClip;
+                progressSound.Play();
+            }
+        }
     }
 
     private void OnDisable()

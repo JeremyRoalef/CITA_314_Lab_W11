@@ -28,7 +28,7 @@ public class ProgressControl : MonoBehaviour
     int challengeNum;
 
     //Called before first frame update
-    void Awake()
+    void Start()
     {
         //Tell button interactable to list to method when it is selected
         if (buttonInteractable != null)
