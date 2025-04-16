@@ -50,6 +50,11 @@ public class ProgressControl : MonoBehaviour
     bool startGame;
     int challengeNum;
 
+    [Header("Library")]
+    [SerializeField]
+    SimpleSliderControl librarySlider;
+
+
     //Called before first frame update
     void Start()
     {
@@ -71,6 +76,15 @@ public class ProgressControl : MonoBehaviour
         {
             SetWall();
         }
+        if (librarySlider != null)
+        {
+            librarySlider.OnSliderActive.AddListener(LibrarySliderActive);
+        }
+    }
+
+    private void LibrarySliderActive()
+    {
+        ChallengeComplete();
     }
 
     private void SetWall()

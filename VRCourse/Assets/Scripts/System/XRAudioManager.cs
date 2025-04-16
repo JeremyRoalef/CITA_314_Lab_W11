@@ -305,11 +305,11 @@ public class XRAudioManager : MonoBehaviour
     {
         if (arg0.interactableObject.transform.CompareTag("Key"))
         {
-            grabSound.clip = keyClip;
+            PlayGrabSound(keyClip);
         }
         else
         {
-            grabSound.clip = grabClip;
+            PlayGrabSound(grabClip);
         }
 
         grabSound.Play();
@@ -317,7 +317,7 @@ public class XRAudioManager : MonoBehaviour
 
     private void OnSelectExitedGrabbable(SelectExitEventArgs arg0)
     {
-        PlayGrabSound();
+        PlayGrabSound(grabClip);
     }
 
     private void OnActivatedGrabbable(ActivateEventArgs arg0)
@@ -356,7 +356,7 @@ public class XRAudioManager : MonoBehaviour
         //else {drawerSound.Stop();}
         if (isDetatched)
         {
-            PlayGrabSound();
+            PlayGrabSound(grabClip);
         }
         else
         {
@@ -438,14 +438,12 @@ public class XRAudioManager : MonoBehaviour
 
     private void OnPhysicsButtonExit()
     {
-        grabSound.clip = keyClip;
-        grabSound.Play();
+        PlayGrabSound(keyClip);
     }
 
     private void OnPhysicsButtonEnter()
     {
-        grabSound.clip = keyClip;
-        grabSound.Play();
+        PlayGrabSound(keyClip);
     }
 
     private void OnDrawerDetatch()
@@ -469,9 +467,9 @@ public class XRAudioManager : MonoBehaviour
      * This also means that when you call the function, you need to add ref before passing the argument
      * (CheckIfClipIsNull(ref myAudioClip))
      */
-    void PlayGrabSound()
+    void PlayGrabSound(AudioClip clip)
     {
-        grabSound.clip = grabClip;
+        grabSound.clip = clip;
         grabSound.Play();
     }
 
