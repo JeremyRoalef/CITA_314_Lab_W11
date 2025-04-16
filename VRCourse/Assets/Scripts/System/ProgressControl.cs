@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
@@ -23,6 +24,9 @@ public class ProgressControl : MonoBehaviour
 
     XRSocketInteractor drawerSocket;
 
+    [SerializeField]
+    CombinationLock comboLock;
+
     [Header("Challenge Settings")]
     [SerializeField]
     GameObject keyInteractableLight;
@@ -33,6 +37,16 @@ public class ProgressControl : MonoBehaviour
     [SerializeField]
     string[] challengeStrings;
 
+
+    [Header("The Wall")]
+
+    [SerializeField]
+    TheWall wall;
+
+    XRSocketInteractor wallSocket;
+
+    [SerializeField]
+    GameObject teleportationAreas;
     bool startGame;
     int challengeNum;
 
@@ -47,6 +61,46 @@ public class ProgressControl : MonoBehaviour
 
         OnStartGame?.Invoke(startGameString);
         SetDrawerInteractable();
+
+        if (comboLock != null)
+        {
+            comboLock.UnlockAction += OnComboUnlocked;
+        }
+
+        if (wall != null)
+        {
+            SetWall();
+        }
+    }
+
+    private void SetWall()
+    {
+        wall.OnDestroy.AddListener(OnDestroyWall);
+
+        wallSocket = wall.GetWallSocket;
+        if (wallSocket != null)
+        {
+            wallSocket.selectEntered.AddListener(OnWallSocketed);
+        }
+    }
+
+    private void OnWallSocketed(SelectEnterEventArgs arg0)
+    {
+        ChallengeComplete();
+    }
+
+    private void OnDestroyWall()
+    {
+        ChallengeComplete();
+        if(teleportationAreas != null)
+        {
+            teleportationAreas.SetActive(true);
+        }
+    }
+
+    private void OnComboUnlocked()
+    {
+        ChallengeComplete();
     }
 
     //Method for when button is pressed

@@ -57,7 +57,7 @@ public class DrawerInteractable : XRGrabInteractable
     const string DEFAULT_LAYER = "Default";
     const string GRAB_LAYER = "Grab";
     bool isGrabbed = false;
-
+    Rigidbody rb;
     //XRSocketInteractable HAS AN AWAKE METHOD!!! DO NOT OVERRIDE ITS AWAKE METHOD WITHOUT CALLING IT
     protected override void Awake()
     {
@@ -80,6 +80,8 @@ public class DrawerInteractable : XRGrabInteractable
 
     private void Start()
     {
+        rb = GetComponent<Rigidbody>();
+
         if (physicsButtonInteractable != null)
         {
             physicsButtonInteractable.OnBaseEnter.AddListener(OnIsDetatchable);
@@ -133,14 +135,23 @@ public class DrawerInteractable : XRGrabInteractable
     {
         base.OnSelectExited(args);
 
-        //Allow the player to grab the object again
-        ChangeLayerMask(GRAB_LAYER);
+        if (!isDetached)
+        {
+            //Allow the player to grab the object again
+            ChangeLayerMask(GRAB_LAYER);
 
-        //Object is not grabbed
-        isGrabbed = false;
+            //Object is not grabbed
+            isGrabbed = false;
 
-        //Reset the object's local position
-        transform.localPosition = drawerTransform.localPosition;
+            //Reset the object's local position
+            transform.localPosition = drawerTransform.localPosition;
+        }
+        else
+        {
+            rb.isKinematic = false;
+        }
+
+
     }
 
 

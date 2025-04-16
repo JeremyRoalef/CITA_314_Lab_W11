@@ -51,6 +51,7 @@ public class XRAudioManager : MonoBehaviour
     DrawerInteractable drawer;
 
     XRPhysicsButtonInteractable drawerPhysicsButton;
+    bool isDetatched;
     XRSocketInteractor drawerSocket;
     AudioSource drawerSound;
     AudioSource drawerSocketSound;
@@ -316,8 +317,7 @@ public class XRAudioManager : MonoBehaviour
 
     private void OnSelectExitedGrabbable(SelectExitEventArgs arg0)
     {
-        grabSound.clip = grabClip;
-        grabSound.Play();
+        PlayGrabSound();
     }
 
     private void OnActivatedGrabbable(ActivateEventArgs arg0)
@@ -354,8 +354,14 @@ public class XRAudioManager : MonoBehaviour
     {
         //if(drawerRb.velocity.magnitude > 0 {drawerSound.Play();})
         //else {drawerSound.Stop();}
-
-        drawerSound.Play();
+        if (isDetatched)
+        {
+            PlayGrabSound();
+        }
+        else
+        {
+            drawerSound.Play();
+        }
     }
     void SetGrabbables()
     {
@@ -444,6 +450,7 @@ public class XRAudioManager : MonoBehaviour
 
     private void OnDrawerDetatch()
     {
+        isDetatched = true;
         drawerSound.Stop();
     }
 
@@ -462,6 +469,12 @@ public class XRAudioManager : MonoBehaviour
      * This also means that when you call the function, you need to add ref before passing the argument
      * (CheckIfClipIsNull(ref myAudioClip))
      */
+    void PlayGrabSound()
+    {
+        grabSound.clip = grabClip;
+        grabSound.Play();
+    }
+
     void CheckIfClipIsNull(ref AudioClip clip)
     {
         if (clip == null)
