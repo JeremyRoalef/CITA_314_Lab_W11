@@ -1,9 +1,13 @@
 using System;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.XR.Interaction.Toolkit;
 
 public class DrawerInteractable : XRGrabInteractable
 {
+    public UnityEvent OnDrawerDetatch;
+
+
     //Serialized Fields
 
     [Header("Game Objects")]
@@ -14,6 +18,7 @@ public class DrawerInteractable : XRGrabInteractable
 
     [SerializeField]
     XRPhysicsButtonInteractable physicsButtonInteractable;
+    public XRPhysicsButtonInteractable GetPhysicsButtonInteractable => physicsButtonInteractable;
 
     [SerializeField]
     Transform drawerTransform;
@@ -197,6 +202,7 @@ public class DrawerInteractable : XRGrabInteractable
     {
         isDetached = true;
         drawerTransform.SetParent(this.transform);
+        OnDrawerDetatch?.Invoke();
     }
 
     //Method to change the object's interaction layer mask for grabbing/ungrabbing purposes

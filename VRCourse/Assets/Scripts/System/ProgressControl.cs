@@ -87,6 +87,9 @@ public class ProgressControl : MonoBehaviour
     {
         if (drawer != null)
         {
+            drawer.OnDrawerDetatch.AddListener(OnDrawerDetatch);
+
+
             drawerSocket = drawer.GetSocketIntractor;
             if (drawerSocket != null)
             {
@@ -94,6 +97,11 @@ public class ProgressControl : MonoBehaviour
             }
         }
 }
+
+    private void OnDrawerDetatch()
+    {
+        ChallengeComplete();
+    }
 
     private void OnDrawerSocketed(SelectEnterEventArgs arg0)
     {
