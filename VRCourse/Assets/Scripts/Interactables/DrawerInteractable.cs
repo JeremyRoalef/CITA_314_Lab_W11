@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
 
@@ -12,12 +13,21 @@ public class DrawerInteractable : XRGrabInteractable
     public XRSocketInteractor GetSocketIntractor => socketInteractor;
 
     [SerializeField]
+    XRPhysicsButtonInteractable physicsButtonInteractable;
+
+    [SerializeField]
     Transform drawerTransform;
 
     [Header("Object Properties")]
     
     [SerializeField]
     Vector3 limitDistances = new Vector3(.01f, .01f, 0);
+
+    [SerializeField]
+    bool isDetachable;
+
+    [SerializeField]
+    bool isDetached;
 
     [SerializeField]
     bool isLocked = true;
@@ -63,16 +73,37 @@ public class DrawerInteractable : XRGrabInteractable
         limitPositions = drawerTransform.localPosition;
     }
 
+    private void Start()
+    {
+        if (physicsButtonInteractable != null)
+        {
+            physicsButtonInteractable.OnBaseEnter.AddListener(OnIsDetatchable);
+            physicsButtonInteractable.OnBaseExit.AddListener(OnIsNotDetatchable);
+        }
+    }
+
+    private void OnIsNotDetatchable()
+    {
+        isDetachable = true;
+    }
+
+    private void OnIsDetatchable()
+    {
+        isDetachable = false;
+    }
+
     void Update()
     {
-        if (isGrabbed && drawerTransform != null)
+        if (!isDetached)
         {
-            drawerTransform.localPosition = new Vector3(
-                drawerTransform.localPosition.x,
-                drawerTransform.localPosition.y,
-                transform.localPosition.z);
-
-            CheckPositionLimits();
+            if (isGrabbed && drawerTransform != null)
+            {
+                drawerTransform.localPosition = new Vector3(
+                    drawerTransform.localPosition.x,
+                    drawerTransform.localPosition.y,
+                    transform.localPosition.z);
+                CheckPositionLimits();
+            }
         }
     }
 
@@ -145,13 +176,27 @@ public class DrawerInteractable : XRGrabInteractable
         }
         else if (drawerTransform.localPosition.z >= maxZPos + limitDistances.z)
         {
-            isGrabbed = false;
-            drawerTransform.localPosition = new Vector3(
-                drawerTransform.localPosition.x,
-                drawerTransform.localPosition.y,
-                maxZPos);
-            ChangeLayerMask(DEFAULT_LAYER);
+            if (!isDetachable)
+            {
+
+                isGrabbed = false;
+                drawerTransform.localPosition = new Vector3(
+                    drawerTransform.localPosition.x,
+                    drawerTransform.localPosition.y,
+                    maxZPos);
+                ChangeLayerMask(DEFAULT_LAYER);
+            }
+            else
+            {
+                DetatchDrawer();
+            }
         }
+    }
+
+    void DetatchDrawer()
+    {
+        isDetached = true;
+        drawerTransform.SetParent(this.transform);
     }
 
     //Method to change the object's interaction layer mask for grabbing/ungrabbing purposes

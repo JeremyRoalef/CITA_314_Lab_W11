@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -11,10 +12,18 @@ public class ProgressControl : MonoBehaviour
     public UnityEvent<string> OnChallengeComplete;
 
 
-    [Header("Interactables")]
+    [Header("Start Button")]
     [SerializeField]
     ButtonInteractable buttonInteractable;
 
+    [Header("Drawer Interactables")]
+
+    [SerializeField]
+    DrawerInteractable drawer;
+
+    XRSocketInteractor drawerSocket;
+
+    [Header("Challenge Settings")]
     [SerializeField]
     GameObject keyInteractableLight;
 
@@ -37,6 +46,7 @@ public class ProgressControl : MonoBehaviour
         }
 
         OnStartGame?.Invoke(startGameString);
+        SetDrawerInteractable();
     }
 
     //Method for when button is pressed
@@ -58,5 +68,35 @@ public class ProgressControl : MonoBehaviour
         }
 
 
+    }
+
+    void ChallengeComplete()
+    {
+        challengeNum++;
+        if (challengeNum < challengeStrings.Length)
+        {
+            OnChallengeComplete?.Invoke(challengeStrings[challengeNum]);
+        }
+        else if (challengeNum >= challengeStrings.Length)
+        {
+            //ALL CHALLENGES COMPLETE
+        }
+    }
+
+    void SetDrawerInteractable()
+    {
+        if (drawer != null)
+        {
+            drawerSocket = drawer.GetSocketIntractor;
+            if (drawerSocket != null)
+            {
+                drawerSocket.selectEntered.AddListener(OnDrawerSocketed);
+            }
+        }
+}
+
+    private void OnDrawerSocketed(SelectEnterEventArgs arg0)
+    {
+        ChallengeComplete();
     }
 }
